@@ -21,8 +21,7 @@ conn.login(SF_USERNAME, SF_PASSWORD + SF_TOKEN, (err, userInfo) => {
 // info on api
 app.get("/api-info", (req, res) => {
   const info = {
-    "API limit": conn.limitInfo.apiUsage.limit,
-    "API used": conn.limitInfo.apiUsage.used,
+    "API limit": conn.limitInfo.apiUsage,
   };
   res.send(info);
 });
