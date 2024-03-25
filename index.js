@@ -19,6 +19,20 @@ conn.login(SF_USERNAME, SF_PASSWORD + SF_TOKEN, (err, userInfo) => {
 });
 
 app.get("/", (req, res) => {
+  conn.sobject("Contact").create(
+    {
+      FirstName: "tester",
+      LastName: "node",
+      Phone: "(111) 111-1111",
+      Email: "tester@gmail.com",
+    },
+    function (err, ret) {
+      if (err || !ret.success) {
+        return console.error(err, ret);
+      }
+      console.log("created contact id: " + ret.id);
+    }
+  );
   conn.query("Select Id, Name , Phone, Email FROM Contact", (err, result) => {
     if (err) {
       res.send(err);
