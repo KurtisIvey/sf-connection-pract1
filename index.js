@@ -18,40 +18,54 @@ conn.login(SF_USERNAME, SF_PASSWORD + SF_TOKEN, (err, userInfo) => {
   }
 });
 
+// info on api
+app.get("/api-info", (req, res) => {
+  const info = {
+    "API limit": conn.limitInfo.apiUsage.limit,
+    "API used": conn.limitInfo.apiUsage.used,
+  };
+  res.send(info);
+});
+
 // gen contact get all query
 app.get("/get", (req, res) => {
-  conn.query("Select Id, Name , Phone, Email FROM Contact", (err, result) => {
+  conn.query("SELECT Id, Name, Phone, Email FROM Contact", (err, result) => {
     if (err) {
       res.send(err);
     } else {
-      console.log("Total records" + result.totalSize);
-      res.json(result.records);
+      const contacts = result.records;
+      console.log("Total records: " + result.totalSize);
+      console.log(contacts);
+      res.json(contacts);
     }
   });
 });
 
 // creation of new contact in SF
 app.get("/create", (req, res) => {
-  conn.sobject("Contact").create(
-    {
-      FirstName: "tester",
-      LastName: "node",
-      Phone: "(111) 111-1111",
-      Email: "tester@gmail.com",
-    },
-    function (err, ret) {
-      if (err || !ret.success) {
-        return console.error(err, ret);
-      }
-      console.log("created contact id: " + ret.id);
-    }
-  );
+  // retrieve all contacts
   conn.query("Select Id, Name , Phone, Email FROM Contact", (err, result) => {
     if (err) {
       res.send(err);
     } else {
-      console.log("Total records" + result.totalSize);
-      res.json(result.records);
+      // assign contacts to var
+      const contacts = result.records;
+      console.log("Total records: " + result.totalSize);
+      console.log(contacts); // console.log to view var
+      res.json(contacts);
+
+      const newContact = {
+        FirstName: "tester",
+        LastName: "node",
+        Phone: "(111) 111-1111",
+        Email: "tester@gmail.com",
+      };
+      conn.sobject("Contact").create(newContact, function (err, ret) {
+        if (err || !ret.success) {
+          return console.error(err, ret);
+        }
+        console.log("created contact id: " + ret.id);
+      });
     }
   });
 });
